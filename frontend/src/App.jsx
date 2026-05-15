@@ -1,65 +1,49 @@
-import { useState } from "react";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
+
+import Login from "./pages/Login";
+
+import Signup from "./pages/Signup";
+
+import Profile from "./pages/Profile";
+
+import Users from "./pages/Users"; 
+
 
 function App() {
 
-  const [name, setName] = useState("");
-
-  const [password, setPassword] = useState("");
-
-  async function signup() {
-
-    const response = await fetch(
-      "http://localhost:3000/users",
-      {
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          name,
-          password,
-        }),
-      }
-    );
-
-    const data = await response.json();
-    console.log(data);
-
-    alert(data.message);
-
-  }
-
   return (
 
-    <div>
+    <BrowserRouter>
 
-      <h1>Welcome</h1>
+      <Routes>
 
-      <input
-        type="text"
-        placeholder="Enter user name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
+        <Route
+          path="/login"
+          element={<Login />}
+        />
 
-      <br /><br />
+        <Route
+          path="/signup"
+          element={<Signup />}
+        />
 
-      <input
-        type="password"
-        placeholder="Enter password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+        <Route
+          path="/profile"
+          element={<Profile />}
+        />
 
-      <br /><br />
+        <Route
+          path="/users"
+          element={<Users />}
+        /> 
 
-      <button onClick={signup}>
-        Signup
-      </button>
+      </Routes>
 
-    </div>
+    </BrowserRouter>
 
   );
 
