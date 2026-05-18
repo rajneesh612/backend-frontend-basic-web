@@ -32,13 +32,13 @@ const createUser = async (req, res) => {
 
   try {
 
-    const { name , password} = req.body;
+    const { name, password, address, gender } = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await pool.query(
-      "INSERT INTO users(name, password) VALUES($1, $2) RETURNING *",
-      [name, hashedPassword]
+      "INSERT INTO users(name, password, address, gender) VALUES($1, $2, $3, $4) RETURNING *",
+      [name, hashedPassword, address, gender]
     );
 
     res.json({
@@ -64,7 +64,10 @@ const loginUser = async (req, res) => {
 
   try {
 
-    const { name, password } = req.body;
+    const { name,
+  password,
+  address,
+  gender, } = req.body;
 
     const result = await pool.query(
       "SELECT * FROM users WHERE name = $1",
@@ -133,7 +136,7 @@ const getProfile = async (req, res) => {
     const userId = req.user.id;
 
     const result = await pool.query(
-      "SELECT id, name FROM users WHERE id = $1",
+     "SELECT id, name, address, gender FROM users WHERE id = $1",
       [userId]
     );
 

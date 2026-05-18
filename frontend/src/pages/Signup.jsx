@@ -8,6 +8,10 @@ function Signup() {
 
   const [password, setPassword] = useState("");
 
+  const [address, setAddress] = useState("");
+
+const [gender, setGender] = useState("");
+
   const navigate = useNavigate();
 
   async function signup() {
@@ -24,6 +28,8 @@ function Signup() {
         body: JSON.stringify({
           name,
           password,
+          address,
+          gender,
         }),
       }
     );
@@ -62,10 +68,26 @@ function Signup() {
 
       <br /><br />
 
-      <button onClick={signup}>
+<input
+  type="text"
+  placeholder="Enter address"
+  value={address}
+  onChange={(e) => setAddress(e.target.value)}
+/>
+
+<br /><br />
+
+<input
+  type="text"
+  placeholder="Enter gender"
+  value={gender}
+  onChange={(e) => setGender(e.target.value)}
+/>
+<br /><br />
+
+  <button onClick={signup}>
         Signup
       </button>
-
     </div>
 
   );
