@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+
+import UserCard from "../components/UserCard";
 
 
 
@@ -28,6 +31,24 @@ function Profile() {
 
   const [editGender, setEditGender] =
     useState("");
+
+  const [showAddModal, setShowAddModal] =
+  useState(false);
+
+const [newName, setNewName] =
+  useState("");
+
+const [newPassword, setNewPassword] =
+  useState("");
+
+const [newAddress, setNewAddress] =
+  useState("");
+
+const [newGender, setNewGender] =
+  useState("");
+
+
+
 
   const navigate = useNavigate();
 
@@ -94,8 +115,47 @@ function Profile() {
     );
 
     getUsers();
-
+    toast.success("User deleted successfully");
   }
+
+
+  async function addUser() {
+
+  await fetch(
+
+    "http://localhost:3000/users",
+
+    {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({
+
+        name: newName,
+
+        password: newPassword,
+
+        address: newAddress,
+
+        gender: newGender,
+
+      }),
+
+    }
+
+  );
+
+  toast.success("User added");
+
+  getUsers();
+
+  setShowAddModal(false);
+
+}
 
   async function updateUser() {
 
@@ -126,6 +186,7 @@ function Profile() {
     );
 
     getUsers();
+    toast.success("User updated");
 
     setShowModal(false);
 
@@ -138,6 +199,13 @@ function Profile() {
     navigate("/login");
 
   }
+
+  const filteredUsers = users.filter(
+  (user) =>
+    user.name
+      .toLowerCase()
+      .includes(search.toLowerCase())
+);
 
   return (
 
@@ -175,6 +243,8 @@ function Profile() {
           Get Users
         </button>
 
+        
+
       ) : (
 
         <button onClick={() => setUsers([])}>
@@ -184,6 +254,17 @@ function Profile() {
       )}
 
       <br /><br />
+     <button
+  onClick={() => setShowAddModal(true)}
+
+  style={{
+    marginRight: "10px",
+  }}
+>
+  Add User
+</button>
+
+
 
       <input
         type="text"
@@ -196,53 +277,39 @@ function Profile() {
 
       <br /><br />
 
-      {users
-        .filter((user) =>
-          user.name
-            .toLowerCase()
-            .includes(search.toLowerCase())
-        )
+
+        
+     {filteredUsers
         .map((user) => (
 
-          <div
-            key={user.id}
-            className="user-card"
-            onClick={() => {
+          <UserCard
 
-              setSelectedUser(user);
+  key={user.id}
 
-              setEditName(user.name);
+  user={user}
 
-              setEditAddress(user.address);
+  deleteUser={deleteUser}
 
-              setEditGender(user.gender);
+  setSelectedUser={setSelectedUser}
 
-              setShowModal(true);
+  setEditName={setEditName}
 
-            }}
-          >
+  setEditAddress={setEditAddress}
 
-            <div className="avatar">
-              {user.name.charAt(0).toUpperCase()}
-            </div>
+  setEditGender={setEditGender}
 
-            <h3>{user.name}</h3>
+  setShowModal={setShowModal}
 
-            <button
-              onClick={(e) => {
-
-                e.stopPropagation();
-
-                deleteUser(user.id);
-
-              }}
-            >
-              Delete
-            </button>
-
-          </div>
+/>
 
         ))}
+
+        {filteredUsers.length === 0 && (
+
+  <h3>No users found</h3>
+
+)}
+
 
       {showModal && selectedUser && (
 
@@ -298,10 +365,82 @@ function Profile() {
 
       )}
 
+
+        {showAddModal && (
+
+  <div
+    className="modal-overlay"
+    onClick={() => setShowAddModal(false)}
+  >
+
+    <div
+      className="modal"
+      onClick={(e) => e.stopPropagation()}
+    >
+
+      <h2>Add User</h2>
+
+      <input
+        type="text"
+        placeholder="Name"
+        value={newName}
+        onChange={(e) =>
+          setNewName(e.target.value)
+        }
+      />
+
+      <input
+        type="text"
+        placeholder="Password"
+        value={newPassword}
+        onChange={(e) =>
+          setNewPassword(e.target.value)
+        }
+      />
+
+      <input
+        type="text"
+        placeholder="Address"
+        value={newAddress}
+        onChange={(e) =>
+          setNewAddress(e.target.value)
+        }
+      />
+
+      <input
+        type="text"
+        placeholder="Gender"
+        value={newGender}
+        onChange={(e) =>
+          setNewGender(e.target.value)
+        }
+      />
+
+      <button onClick={addUser}>
+        Create
+      </button>
+
+      <button
+        onClick={() =>
+          setShowAddModal(false)
+        }
+      >
+        Close
+      </button>
+
+    </div>
+
+  </div>
+
+)}
+
+
+
     </div>
 
   );
 
 }
+
 
 export default Profile;

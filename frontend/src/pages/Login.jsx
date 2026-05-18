@@ -2,15 +2,22 @@ import { useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 
+import { toast } from "react-toastify";
+
 function Login() {
 
   const [name, setName] = useState("");
 
   const [password, setPassword] = useState("");
 
+  const [loading, setLoading] =
+  useState(false);
+
   const navigate = useNavigate();
 
   async function login() {
+
+    setLoading(true);
 
     const response = await fetch(
       "http://localhost:3000/users/login",
@@ -29,6 +36,7 @@ function Login() {
     );
 
     const data = await response.json();
+    setLoading(false);
 
     console.log(data);
 
@@ -36,13 +44,13 @@ function Login() {
 
       localStorage.setItem("token", data.token);
 
-      alert("Login successful");
+      toast.success("Login successful");
 
       navigate("/profile");
 
     } else {
 
-      alert(data.message);
+      toast.error(data.message);
 
     }
 
@@ -72,9 +80,16 @@ function Login() {
 
       <br /><br />
 
-      <button onClick={login}>
-        Login
-      </button>
+      <button
+  onClick={login}
+  disabled={loading}
+>
+
+  {loading
+    ? "Logging in..."
+    : "Login"}
+
+</button>
 
     </div>
 

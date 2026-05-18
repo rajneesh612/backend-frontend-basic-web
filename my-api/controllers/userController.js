@@ -188,16 +188,40 @@ const updateUser = async (req, res) => {
 
     const { id } = req.params;
 
-    const { name } = req.body;
+    const {
+      name,
+      address,
+      gender,
+    } = req.body;
 
     const result = await pool.query(
-      "UPDATE users SET name = $1 WHERE id = $2 RETURNING *",
-      [name, id]
+
+      `UPDATE users
+       
+       SET
+       name = $1,
+       address = $2,
+       gender = $3
+       
+       WHERE id = $4
+       
+       RETURNING *`,
+
+      [
+        name,
+        address,
+        gender,
+        id,
+      ]
+
     );
 
     res.json({
+
       message: "User updated",
-      user: result.rows[0]
+
+      user: result.rows[0],
+
     });
 
   } catch (error) {
@@ -205,7 +229,9 @@ const updateUser = async (req, res) => {
     console.log(error);
 
     res.status(500).json({
-      message: "Server error"
+
+      message: "Server error",
+
     });
 
   }
